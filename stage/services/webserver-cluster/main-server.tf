@@ -1,15 +1,3 @@
-data "aws_vpc" "default" {
-	default = true
-}
-
-data "aws_subnets" "default" {
-	filter {
-		name 	 = "vpc-id"
-		values = [data.aws_vpc.default.id]
-	}
-}
-
-
 resource "aws_launch_configuration" "example" {
   image_id = "ami-0fb653ca2d3203ac1"
   instance_type = "t2.micro"

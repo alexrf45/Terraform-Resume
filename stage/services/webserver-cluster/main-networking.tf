@@ -1,3 +1,14 @@
+data "aws_vpc" "default" {
+	default = true
+}
+
+data "aws_subnets" "default" {
+	filter {
+		name 	 = "vpc-id"
+		values = [data.aws_vpc.default.id]
+	}
+}
+
 resource "aws_lb" "example" {
 	name               = "terraform-asg-example"
 	load_balancer_type = "application"

@@ -4,8 +4,3 @@ variable "server_port"{
 	default     = 8080
 }
 
-#variable "test" {
-#	description = "test variable with autocompletion"
-#	type        = string
-#}
-
