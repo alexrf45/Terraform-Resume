@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "webserver_cluster" {
-  source = "github.com/alexrf45/tf-modules-resume//services/webserver-cluster?ref=v0.0.1"
+  source = "github.com/alexrf45/tf-modules-resume//services/webserver-cluster?ref=v0.0.2"
   
   cluster_name            = "webserver-stage"
   db_remote_state_bucket  = "tf-state-resume"
