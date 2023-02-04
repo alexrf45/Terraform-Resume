@@ -4,7 +4,11 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    key = "global/s3/terraform.tfstate"
+    bucket         = "tf-state-resume"
+    region         = "us-east-2"
+    dynamodb_table = "terraform-up-and-running-locks"
+    encrypt        = true
+    key            = "global/s3/terraform.tfstate"
   }
 }
 
