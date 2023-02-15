@@ -1,9 +1,16 @@
 provider "aws" {
   region = "us-east-2"
+ 
+  default_tags {
+    tags = {
+      Owner = "team-foo"
+      ManagedBy = "Terraform"      
+    }
+  }
 }
 
 module "webserver_cluster" {
-  source = "github.com/alexrf45/tf-modules-resume//services/webserver-cluster?ref=v0.0.2"
+  source = "github.com/alexrf45/tf-modules-resume//services/webserver-cluster?ref=v2.4.0"
   
   cluster_name            = "webserver-stage"
   db_remote_state_bucket  = "tf-state-resume"
