@@ -1,9 +1,16 @@
 provider "aws" {
   region = "us-east-2"
+
+  default_tags {
+    tags = {
+      Owner = "team-foo"
+      ManagedBy = "Terraform"
+    }
+  }
 }
 
 module "webserver_cluster" {
-  source = "github.com/alexrf45/tf-modules-resume//services/webserver-cluster?ref=v0.0.1"
+  source = "github.com/alexrf45/tf-modules-resume//services/webserver-cluster?ref=v2.4.0"
   
   cluster_name            = "webserver-prod"
   db_remote_state_bucket  = "tf-state-resume-prod"
@@ -12,6 +19,11 @@ module "webserver_cluster" {
   instance_type = "t2.micro"
   min_size      = 2
   max_size      = 10
+
+  custom_tags = {
+    Owner = "team-foo"
+    ManagedBy = "terraform"
+  }
 }
 
 resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
