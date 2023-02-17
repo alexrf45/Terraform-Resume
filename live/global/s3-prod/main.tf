@@ -2,20 +2,20 @@ provider "aws" {
   region = var.region
 }
 
-terraform {
-  backend "s3" {
-    bucket         = "tf-state-resume-prod"
-    region         = "us-east-2"
-    dynamodb_table = "terraform-up-and-running-locks-prod"
-    encrypt        = true
-    key            = "global/s3-prod/terraform.tfstate"
-    }
-  }
+#terraform {
+#  backend "s3" {
+#    bucket         = "tf-state-resume-prod"
+#    region         = "us-east-2"
+#    dynamodb_table = "terraform-up-and-running-locks-prod"
+#    encrypt        = true
+#    key            = "global/s3-prod/terraform.tfstate"
+#    }
+#  }
 
 resource "aws_s3_bucket" "terraform_state-prod" {
   bucket = var.bucket
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "default-prod" {
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access-prod" {
-  bucket = aws_s3_bucket.terraform_state-prod.id
+  bucket                  = aws_s3_bucket.terraform_state-prod.id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
@@ -47,7 +47,7 @@ resource "aws_dynamodb_table" "terraform_locks-prod" {
   name         = "terraform-up-and-running-locks-prod"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
-  
+
   attribute {
     name = "LockID"
     type = "S"
