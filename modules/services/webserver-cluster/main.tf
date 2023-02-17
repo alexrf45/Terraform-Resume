@@ -1,13 +1,13 @@
 # remote state
 
-data "terraform_remote_state" "db" {
-  backend = "s3"
-  config = {
-    bucket = var.db_remote_state_bucket
-    key    = var.db_remote_state_key
-    region = "us-east-2"
-  }
-}
+#data "terraform_remote_state" "db" {
+#  backend = "s3"
+#  config = {
+#    bucket = var.db_remote_state_bucket
+#    key    = var.db_remote_state_key
+#    region = var.region
+#  }
+#}
 
 # autolaunch configuration and ASG
 
@@ -20,7 +20,7 @@ locals {
 }
 
 resource "aws_launch_configuration" "example" {
-  image_id        = "ami-0fb653ca2d3203ac1"
+  image_id        = var.ami
   instance_type   = var.instance_type
   security_groups = [aws_security_group.instance.id]
   user_data = templatefile("${path.module}/user-data.sh", {

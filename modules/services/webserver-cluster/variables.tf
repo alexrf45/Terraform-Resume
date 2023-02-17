@@ -24,6 +24,12 @@ variable "instance_type" {
   type        = string
 }
 
+variable "ami" {
+  description = "Amazon Machine Image"
+  type        = string
+  default     = "ami-0557a15b87f6559cf"
+}
+
 variable "min_size" {
   description = "The minimum number of EC2 Instances in the ASG"
   type        = number
