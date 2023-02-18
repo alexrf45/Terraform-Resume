@@ -1,5 +1,22 @@
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+  backend "s3" {
+    bucket         = "tf-state-resume-stage"
+    region         = "us-east-1"
+    dynamodb_table = "tf-locks"
+    encrypt        = true
+    key            = "global/iam-stage/terraform.tfstate"
+  }
+}
+
 provider "aws" {
-  region = "us-east-2"
+  region = var.region
 }
 
 module "users" {

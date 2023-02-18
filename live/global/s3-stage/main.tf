@@ -2,20 +2,20 @@ provider "aws" {
   region = var.region
 }
 
-#terraform {
-#  backend "s3" {
-#    bucket         = "tf-state-resume-stage"
-#    region         = "us-east-1"
-#    dynamodb_table = "tf-locks"
-#    encrypt        = true
-#    key            = "global/s3-stage/terraform.tfstate"
-#  }
-#}
+terraform {
+  backend "s3" {
+    bucket         = "tf-state-resume-stage"
+    region         = "us-east-1"
+    dynamodb_table = "tf-locks"
+    encrypt        = true
+    key            = "global/s3-stage/terraform.tfstate"
+  }
+}
 
 resource "aws_s3_bucket" "terraform_state" {
   bucket = var.bucket
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
 

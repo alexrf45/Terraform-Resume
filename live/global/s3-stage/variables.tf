@@ -7,7 +7,7 @@ variable "region" {
 variable "bucket" {
   description = "bucket name"
   type        = string
-  default     = "tf-state-resume-stage"
+  default     = ""
 }
 
 variable "dynamodb_table_name" {
