@@ -1,3 +1,11 @@
+variable "region" {
+  description = "AWS region"
+  type = string
+  default = "us-east-1"
+  
+}
+
+
 variable "server_port" {
   description = "The port the server will use for HTTP requests"
   type        = number
@@ -49,4 +57,10 @@ variable "custom_tags" {
 variable "enable_autoscaling" {
   description = "If set to true, enable autoscaling"
   type        = bool
+}
+
+variable "server_text" {
+  description = "The text the web server should return"
+  type        = string
+  default     = "Hello World!"
 }

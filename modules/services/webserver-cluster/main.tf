@@ -1,13 +1,13 @@
 # remote state
 
-#data "terraform_remote_state" "db" {
-#  backend = "s3"
-#  config = {
-#    bucket = var.db_remote_state_bucket
-#    key    = var.db_remote_state_key
-#    region = var.region
-#  }
-#}
+data "terraform_remote_state" "db" {
+  backend = "s3"
+  config = {
+    bucket = var.db_remote_state_bucket
+    key    = var.db_remote_state_key
+    region = "us-east-1"
+  }
+}
 
 # autolaunch configuration and ASG
 
@@ -19,34 +19,65 @@ locals {
   all_ips      = ["0.0.0.0/0"]
 }
 
-resource "aws_launch_configuration" "example" {
-  image_id        = var.ami
-  instance_type   = var.instance_type
-  security_groups = [aws_security_group.instance.id]
-  user_data = templatefile("${path.module}/user-data.sh", {
+# resource "aws_launch_configuration" "example" {
+# image_id        = var.ami
+#  instance_type   = var.instance_type
+#  security_groups = [aws_security_group.instance.id]
+# user_data = templatefile("${path.module}/user-data.sh", {
+#   server_port = var.server_port
+#    db_address  = data.terraform_remote_state.db.outputs.address
+#    db_port     = data.terraform_remote_state.db.outputs.port
+#    server_text = var.server_text
+#  })
+#  lifecycle {
+#    create_before_destroy = true
+#  }
+#}
+
+resource "aws_launch_template" "example" {
+  name                   = "foo"
+  image_id               = var.ami
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.instance.id]
+  user_data = base64encode(templatefile("${path.module}/user-data.sh", {
     server_port = var.server_port
     db_address  = data.terraform_remote_state.db.outputs.address
-    db_port     = data.terraform_remote_state.db.outputs.port
-  })
-  lifecycle {
-    create_before_destroy = true
-  }
+    db_port     = data.terraform_remote_state.db.outputs.address
+    server_text = var.server_text
+  }))
 }
 
+
+
 resource "aws_autoscaling_group" "example" {
-  launch_configuration = aws_launch_configuration.example.name
-  vpc_zone_identifier  = data.aws_subnets.default.ids
-  target_group_arns    = [aws_lb_target_group.asg.arn]
-  health_check_type    = "ELB"
-  min_size             = var.min_size
-  max_size             = var.max_size
+  launch_template {
+    id      = aws_launch_template.example.id
+    version = "$Latest"
+  }
+  vpc_zone_identifier = data.aws_subnets.default.ids
+  target_group_arns   = [aws_lb_target_group.asg.arn]
+  health_check_type   = "ELB"
+  min_size            = var.min_size
+  max_size            = var.max_size
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50
+    }
+  }
+
   tag {
     key                 = "Name"
     value               = var.cluster_name
     propagate_at_launch = true
   }
   dynamic "tag" {
-    for_each = var.custom_tags
+    for_each = {
+      for key, value in var.custom_tags :
+      key => upper(value)
+      if key != "Name"
+    }
 
     content {
       key                 = tag.key

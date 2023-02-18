@@ -4,11 +4,11 @@ provider "aws" {
 
 #terraform {
 #  backend "s3" {
-#   bucket         = "tf-state-resume"
-#    region         = "us-east-2"
-#    dynamodb_table = "terraform-up-and-running-locks"
+#    bucket         = "tf-state-resume-stage"
+#    region         = "us-east-1"
+#    dynamodb_table = "tf-locks"
 #    encrypt        = true
-#    key            = "global/s3/terraform.tfstate"
+#    key            = "global/s3-stage/terraform.tfstate"
 #  }
 #}
 
@@ -44,7 +44,7 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 }
 
 resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform-up-and-running-locks"
+  name         = var.dynamodb_table_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 

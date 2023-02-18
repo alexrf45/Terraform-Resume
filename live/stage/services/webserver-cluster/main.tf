@@ -1,9 +1,9 @@
 provider "aws" {
-  region = "us-east-2"
+  region = var.region
 
   default_tags {
     tags = {
-      Owner     = "team-foo"
+      Owner     = "Sean Fontaine"
       ManagedBy = "Terraform"
     }
   }
@@ -12,9 +12,12 @@ provider "aws" {
 module "webserver_cluster" {
   source = "../../../../modules/services/webserver-cluster"
 
-  cluster_name = "webserver-stage"
-  #db_remote_state_bucket = "tf-state-resume"
-  #db_remote_state_key    = "stage/data-stores/mysql/terraform.tfstate"
+  ami         = "ami-0dfcb1ef8550277af"
+  server_text = "New Server Text"
+
+  cluster_name           = "webserver-stage"
+  db_remote_state_bucket = "tf-state-resume-stage"
+  db_remote_state_key    = "stage/data-stores/mysql/terraform.tfstate"
 
   instance_type      = "t2.micro"
   min_size           = 2
